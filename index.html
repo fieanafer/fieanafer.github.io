@@ -116,34 +116,15 @@
             <input id="nick" class="form-control" placeholder="Nickname" maxlength="14" value=""/>
           </div>
           <div class="form-group">
-            <input id="iphack" class="form-control" placeholder="Server IP and Port" value=""/>
+            <input id="iphack" class="form-control" placeholder="Server IP and Port" value="127.0.0.1:443"/>
           </div>
           <div class="form-group">
-            <select id="region" class="form-control" onchange="setRegion($('#region').val());$('.region-message').hide();$('.region-message.'+$('#region').val()).show();$('.btn-needs-server').prop('disabled', false);" required>
-              <option selected disabled value=""> -- Select a Region -- </option>
-              <option value="US-Fremont">US West</option>
-              <option value="US-Atlanta">US East</option>
-              <option value="BR-Brazil">South America</option>
-              <option value="EU-London">Europe</option>
-              <option value="RU-Russia">Russia</option>
-              <option value="JP-Tokyo">East Asia</option>
-              <option value="CN-China">China</option>
-              <option value="SG-Singapore">Oceania</option>
-            </select>
-            <select id="gamemode" class="form-control" onchange="setGameMode($(this).val());" required="">
-              <option selected="" value="">FFA</option>
-              <option value=":teams">Teams</option>
-            </select>
-            <br/><br/>
-          </div>
-          <div class="form-group">
-            <button disabled type="submit" id="playBtn" onclick="setNick(document.getElementById('nick').value); return false;" class="btn btn-play btn-primary btn-needs-server">Play</button>
+            <button type="submit" id="playBtn" onclick="setNick(document.getElementById('nick').value); return false;" class="btn btn-play btn-primary btn-needs-server">Play</button>
             <button onclick="$('#settings').toggle(); return false;" class="btn btn-info btn-settings"><i class="glyphicon glyphicon-cog"></i></button>
             <br clear="both"/>
           </div>
           <div id="settings" class="checkbox" style="xdisplay:none;">
             <center>
-              <button onclick="spectate(); return false;" disabled class="btn btn-warning btn-spectate btn-needs-server">Spectate</button>
               <label><input type="checkbox" onchange="setSkins(!$(this).is(':checked'));"> No skins</label>
               <label><input type="checkbox" onchange="setNames(!$(this).is(':checked'));"> No names</label>
               <label><input type="checkbox" onchange="setDarkTheme($(this).is(':checked'));"> Dark Theme</label>
@@ -161,18 +142,7 @@
         Press <b>Space</b> to split.<br/>
         Press <b>W</b> to eject some mass<br/>
         <hr/>
-            <b>This version is developed for educational purpose only.</b><br/>
-            Send the pull-request to <a href="https://github.com/TheZ3ro/Agar.io-Reverse-Engineering" target="_blank">github</a><br/>
-            Play the original <a href="http://agar.io">agar.io</a>
-        </span></center>
-        <hr/>
-        <img id="blocker" width="320" height="100" src="blocker.png" style="display:none;border-radius:5px;"/>
-        <hr style="margin-bottom: 7px; "/>
-        <div style="margin-bottom: 5px; float: left; line-height: 32px; margin-left: 6px; height: 32px;">
-        <a href="http://agar.io/privacy.txt" class="text-muted">Privacy Policy</a>
-        |
-        <a href="http://agar.io/changelog.txt" class="text-muted">Changelog</a>
-        </div>
+
         <br clear="both"/>
       </div>
     </div>
@@ -190,14 +160,6 @@
     <script src="js/jquery.js"></script>
     <script src="quadtree.js"></script>
     <script src="main_out.js"></script>
-
-    <script>
-        $(function(){
-            if(document.location.host != 'localhost' && document.location.host!='agar.io'){
-                alert('Please use domain localhost or agar.io');
-            }
-        });
-    </script>
 
   </body>
 </html>

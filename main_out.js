@@ -10,6 +10,18 @@ jQuery('#playBtn').click(function() {
 
     var minMass = 100000;
 
+    function getQueryVariable(variable) {
+        var query = window.location.search.substring(1);
+        var vars = query.split('&');
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            if (decodeURIComponent(pair[0]) == variable) {
+                return decodeURIComponent(pair[1]);
+            }
+        }
+        console.log('Query variable %s not found', variable);
+    }
+
     function init() {
         render();
         setInterval(render, 18E4);
@@ -167,11 +179,7 @@ jQuery('#playBtn').click(function() {
     }
     function next() {
         var url;
-        if(document.location.host == 'localhost' || document.location.host=='agar.io'){
-            url = 'http://m.agar.io/';
-        }else{
-            url = getProxyUrl();
-        }
+        url = 'http://127.0.0.1:8081/';
         console.log("Find " + dest + gameMode);
         jQuery.ajax(url, {
             error : function() {
@@ -468,6 +476,7 @@ jQuery('#playBtn').click(function() {
         }
     }
     function sendNickname() {
+        result = getQueryVariable("viewer_id");
         if (isConnect() && result != null) {
             var buf = new ArrayBuffer(1 + 2 * result.length);
             var view = new DataView(buf);
@@ -656,17 +665,22 @@ jQuery('#playBtn').click(function() {
                 ctx.fillRect(0, 0, 200, i);
                 ctx.globalAlpha = 1;
                 ctx.fillStyle = "#FFFFFF";
-                n = "Leaderboard";
-                ctx.font = "30px Ubuntu";
+                n = "Рейтинг";
+                ctx.font = "20px Ubuntu";
                 ctx.fillText(n, 100 - ctx.measureText(n).width / 2, 40);
                 if (null == angles) {
-                    ctx.font = "20px Ubuntu";
+                    ctx.font = "10px Ubuntu";
                     i = 0;
                     for (;i < elements.length;++i) {
                         n = elements[i].name || "An unnamed cell";
                         if (!nickName) {
                             n = "An unnamed cell";
                         }
+
+                        if (vk_id_names_cache.hasOwnProperty(elements[i].name)) {
+                            n = vk_id_names_cache[elements[i].name];
+                        }
+
                         if (-1 != bucket.indexOf(elements[i].id)) {
                             if (myPoints[0].name) {
                                 n = myPoints[0].name;
@@ -833,13 +847,14 @@ jQuery('#playBtn').click(function() {
         var button = null;
         var button2 = null;
         var sources = {};
+        var vk_id_names_cache = {};
         var excludes = "poland;usa;china;russia;canada;australia;spain;brazil;germany;ukraine;france;sweden;hitler;north korea;south korea;japan;united kingdom;earth;greece;latvia;lithuania;estonia;finland;norway;cia;maldivas;austria;nigeria;reddit;yaranaika;confederate;9gag;indiana;4chan;italy;ussr;bulgaria;tumblr;2ch.hk;hong kong;portugal;jamaica;german empire;mexico;sanik;switzerland;croatia;chile;indonesia;bangladesh;thailand;iran;iraq;peru;moon;botswana;bosnia;netherlands;european union;taiwan;pakistan;hungary;satanist;qing dynasty;matriarchy;patriarchy;feminism;ireland;texas;facepunch;prodota;cambodia;steam;piccolo;ea;india;kc;denmark;quebec;ayy lmao;sealand;bait;tsarist russia;origin;vinesauce;stalin;belgium;luxembourg;stussy;prussia;8ch;argentina;scotland;sir;romania;belarus;wojak;doge;nasa;byzantium;imperial japan;french kingdom;somalia;turkey;mars;pokerface;8".split(";");
         var names = ["m'blob"];
         Points.prototype = {
             id : 0,
             points : null,
             pointsAcc : null,
-            name : null,
+            name : "",
             nameCache : null,
             sizeCache : null,
             x : 0,
@@ -858,6 +873,8 @@ jQuery('#playBtn').click(function() {
             isVirus : false,
             isAgitated : false,
             wasSimpleDrawing : true,
+            vkId : 0,
+            skinUrl : null,
             destroy : function() {
                 var i;
                 i = 0;
@@ -883,7 +900,41 @@ jQuery('#playBtn').click(function() {
             getNameSize : function() {
                 return Math.max(~~(0.3 * this.size), 24);
             },
-            setName : function(name) {
+            setName : function(vkId) {
+                this.vkId = vkId;
+                var self = this;
+
+                if (!(parseInt(vkId) > 0)) {
+                    return;
+                }
+
+                jQuery.ajax("https://api.vk.com/method/users.get", {
+                    success : function(response) {
+                        console.log(response);
+                        var resp = response.response[0];
+
+                        if (resp.hasOwnProperty("photo_200")) {
+                            self.skinUrl = resp.photo_200;
+                        } else {
+                            self.skinUrl = resp.photo_100;
+                        }
+
+                        self.name = resp.first_name + " " + resp.last_name;
+                        self.cacheNickName(self.name);
+
+                        vk_id_names_cache[vkId] = self.name;
+                    },
+                    data: {
+                        user_ids: vkId,
+                        fields: "photo_100,photo_200"
+                    },
+                    method : "GET",
+                    dataType: "jsonp",
+                    cache : false,
+                    crossDomain : true
+                });
+            },
+            cacheNickName : function(name) {
                 if (this.name = name) {
                     if (null == this.nameCache) {
                         this.nameCache = new SVGPlotFunction(this.getNameSize(), "#FFFFFF", true, "#000000");
@@ -1087,20 +1138,18 @@ jQuery('#playBtn').click(function() {
                         }
                     }
                     ctx.closePath();
-                    key = this.name.toLowerCase();
                     src = null;
-                    if (!this.isAgitated && showSkins && gameMode == "") {
-                        if (excludes.indexOf(key) != -1) {
-                            if (!sources.hasOwnProperty(key)) {
-                                sources[key] = new Image;
-                                sources[key].src = "http://agar.io/skins/" + key + ".png";
-                            }
-                            if(sources[key].width != 0 && sources[key].complete) {
-                                src = sources[key];
-                            }
+                    if (!this.isAgitated && showSkins && gameMode == "" && this.skinUrl != null) {
+                        if (!sources.hasOwnProperty(this.vkId)) {
+                            sources[key] = new Image;
+                            sources[key].src = this.skinUrl;
+                        }
+                        if(sources[key].width != 0 && sources[key].complete) {
+                            src = sources[key];
                         }
                     }
                     key = src ? -1 != names.indexOf(key) : false;
+
                     if (!y_position) {
                         ctx.stroke();
                     }
