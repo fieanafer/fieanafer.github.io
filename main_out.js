@@ -605,18 +605,6 @@ jQuery('#playBtn').click(function() {
             ctx.fillRect(10, height - 10 - 24 - 10, w + 10, 34);
             ctx.globalAlpha = 1;
             ctx.drawImage(d, 15, height - 10 - 24 - 5);
-
-            if (null == button2) {
-                button2 = new SVGPlotFunction(24, "#FFFFFF");
-            }
-            button2.setValue("Server "+gameMode.substr(1)+": " + ws.url);
-            d = button2.render();
-            w = d.width;
-            ctx.globalAlpha = 0.4;
-            ctx.fillStyle = "#000000";
-            ctx.fillRect(width - w - 20, height - 10 - 24 - 10, w + 10, 34);
-            ctx.globalAlpha = 1;
-            ctx.drawImage(d, width - w - 15, height - 10 - 24 - 5);
         }
         clear();
         tick = +new Date - tick;
