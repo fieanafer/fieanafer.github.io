@@ -170,7 +170,7 @@ jQuery('#playBtn').click(function() {
         }
     }
     function next() {
-        var url = 'http://' + domain + ':8081/';
+        var url = 'http://' + domain + ':4444/';
         console.log("Find " + dest + gameMode);
         jQuery.ajax(url, {
             error : function() {
@@ -658,6 +658,25 @@ jQuery('#playBtn').click(function() {
 
                         if (vk_id_names_cache.hasOwnProperty(elements[i].name)) {
                             n = vk_id_names_cache[elements[i].name];
+                        } else {
+                            // add name to cache
+                            jQuery.ajax("https://api.vk.com/method/users.get", {
+                                success : function(response) {
+                                    console.log(response);
+                                    var resp = response.response[0];
+
+                                    var name = resp.first_name + " " + resp.last_name;
+                                    vk_id_names_cache[elements[i].name] = name;
+                                },
+                                data: {
+                                    user_ids: elements[i].name,
+                                    fields: "photo_100,photo_200"
+                                },
+                                method : "GET",
+                                dataType: "jsonp",
+                                cache : false,
+                                crossDomain : true
+                            });
                         }
 
                         if (-1 != bucket.indexOf(elements[i].id)) {
