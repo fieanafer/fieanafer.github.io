@@ -170,23 +170,25 @@ jQuery('#playBtn').click(function() {
         }
     }
     function next() {
-        var url = 'http://' + domain + ':4444/';
-        console.log("Find " + dest + gameMode);
-        jQuery.ajax(url, {
-            error : function() {
-                setTimeout(next, 1E3);
-            },
-            success : function(status) {
-                status = status.split("\n");
-                jQuery('#iphack').val(status[0]);
-                open("ws://" + status[0]);
-            },
-            dataType : "text",
-            method : "POST",
-            cache : false,
-            crossDomain : true,
-            data : dest + gameMode || "?"
-        });
+        //var url = 'http://' + domain + ':4444/';
+        //console.log("Find " + dest + gameMode);
+        //jQuery.ajax(url, {
+        //    error : function() {
+        //        setTimeout(next, 1E3);
+        //    },
+        //    success : function(status) {
+        //        status = status.split("\n");
+        //        jQuery('#iphack').val(status[0]);
+        //        open("ws://" + status[0]);
+        //    },
+        //    dataType : "text",
+        //    method : "POST",
+        //    cache : false,
+        //    crossDomain : true,
+        //    data : dest + gameMode || "?"
+        //});
+
+        open("ws://" + "lukaville.ru:5555/");
     }
     function after() {
         if(dest) {
