@@ -23,6 +23,11 @@ jQuery('#playBtn').click(function() {
     }
 
     function init() {
+        if (window == window.top) {
+            console.log("Where is VK?!");
+            //return;
+        }
+
         render();
         setInterval(render, 18E4);
         canvas = canvas2 = document.getElementById("canvas");
@@ -155,19 +160,6 @@ jQuery('#playBtn').click(function() {
                 }
             });
         }
-        var url;
-        if(document.location.host == 'localhost' || document.location.host=='agar.io'){
-            url = 'http://m.agar.io/info';
-        }else{
-            url = document.location.href
-            url = getProxyUrl()+'?info=1';
-        }
-        jQuery.get(url, function(b) {
-            var name;
-            for (name in b.regions) {
-                jQuery('#region option[value="' + name + '"]').text(old[name] + " (" + b.regions[name].numPlayers + " players)");
-            }
-        }, "json");
     }
     function setRegion(mat) {
         if (mat) {
@@ -178,8 +170,7 @@ jQuery('#playBtn').click(function() {
         }
     }
     function next() {
-        var url;
-        url = 'http://127.0.0.1:8081/';
+        var url = 'http://' + domain + ':8081/';
         console.log("Find " + dest + gameMode);
         jQuery.ajax(url, {
             error : function() {
@@ -595,16 +586,16 @@ jQuery('#playBtn').click(function() {
         closingAnimationTime = Math.max(closingAnimationTime, getHeight());
         if (0 != closingAnimationTime) {
             if (null == button) {
-                button = new SVGPlotFunction(24, "#FFFFFF");
+                button = new SVGPlotFunction(14, "#FFFFFF");
             }
-            button.setValue("Score: " + ~~(closingAnimationTime / 100));
+            button.setValue("Очки: " + ~~(closingAnimationTime / 100));
             d = button.render();
             w = d.width;
             ctx.globalAlpha = 0.2;
             ctx.fillStyle = "#000000";
-            ctx.fillRect(10, height - 10 - 24 - 10, w + 10, 34);
+            ctx.fillRect(10, height - 10 - 14 - 10, w + 10, 26);
             ctx.globalAlpha = 1;
-            ctx.drawImage(d, 15, height - 10 - 24 - 5);
+            ctx.drawImage(d, 15, height - 10 - 14 - 5);
         }
         clear();
         tick = +new Date - tick;
@@ -644,7 +635,7 @@ jQuery('#playBtn').click(function() {
                 var ctx = img.getContext("2d");
                 var i = 60;
                 i = null == angles ? i + 24 * elements.length : i + 180;
-                var n = Math.min(200, 0.3 * width) / 200;
+                var n = Math.min(130, 0.3 * width) / 200;
                 img.width = 200 * n;
                 img.height = i * n;
                 ctx.scale(n, n);
@@ -655,9 +646,9 @@ jQuery('#playBtn').click(function() {
                 ctx.fillStyle = "#FFFFFF";
                 n = "Рейтинг";
                 ctx.font = "20px Ubuntu";
-                ctx.fillText(n, 100 - ctx.measureText(n).width / 2, 40);
+                ctx.fillText(n, 100 - ctx.measureText(n).width / 2, 30);
                 if (null == angles) {
-                    ctx.font = "10px Ubuntu";
+                    ctx.font = "14px Ubuntu";
                     i = 0;
                     for (;i < elements.length;++i) {
                         n = elements[i].name || "An unnamed cell";
@@ -678,7 +669,7 @@ jQuery('#playBtn').click(function() {
                             ctx.fillStyle = "#FFFFFF";
                         }
                         n = i + 1 + ". " + n;
-                        ctx.fillText(n, 100 - ctx.measureText(n).width / 2, 70 + 24 * i);
+                        ctx.fillText(n, 100 - ctx.measureText(n).width / 2, 64 + 24 * i);
                     }
                 } else {
                     i = n = 0;
@@ -768,6 +759,8 @@ jQuery('#playBtn').click(function() {
         var isTypesHack = false;
         var aa = false;
         var closingAnimationTime = 0;
+
+        var domain = "lukaville.ru";
 
         var angles = null;
         var css = ["#333333", "#FF3333", "#33FF33", "#3333FF"];

@@ -11,11 +11,17 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Agar.io - Assistant</title>
     <link href='http://fonts.googleapis.com/css?family=Ubuntu:700' rel='stylesheet' type='text/css'>
+      <link href='http://fonts.googleapis.com/css?family=Play:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <style>body {
         padding: 0;
         margin: 0;
         overflow: hidden;
+        font-family: 'Play', sans-serif;
+    }
+
+    h2 {
+        font-size: 48px;
     }
 
     #canvas {
@@ -36,24 +42,15 @@
         margin-bottom: 0px;
     }
 
-    .btn-play, .btn-settings, .btn-spectate {
+    .btn-play {
         display: block;
-        height: 35px;
+        height: 68px;
     }
 
     .btn-play {
         width: 85%;
-        float: left;
-    }
-
-    .btn-settings {
-        width: 13%;
-        float: right;
-    }
-
-    .btn-spectate {
-        display: block;
-        float: right;
+        margin: 32px auto 0;
+        font-size: 24px;
     }
 
     #adsBottom {
@@ -62,34 +59,6 @@
         right: 0;
         bottom: 0;
         z-index: 2;
-    }
-
-    #adsBottomInner {
-        margin: 0px auto;
-        width: 728px;
-        height: 90px;
-        border: 5px solid white;
-        border-radius: 5px 5px 0px 0px;
-        background-color: #FFFFFF;
-        box-sizing: content-box;
-    }
-
-    .region-message {
-        display: none;
-        margin-bottom: 12px;
-        margin-left: 6px;
-        margin-right: 6px;
-        text-align: center;
-    }
-
-    #region {
-        width: 65%;
-        float: left;
-    }
-
-    #gamemode {
-        width: 33%;
-        float: right;
     }
 
     .form-group {
@@ -107,23 +76,22 @@
   </head>
   <body>
     <div id="overlays" style="position: absolute; left: 0; right: 0; top: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 2;">
-      <div id="helloDialog" style="width: 350px; background-color: #FFFFFF; margin: 5% auto; border-radius: 15px; padding: 1px 15px 1px 15px;">
+      <div id="helloDialog" style="width: 372px; background-color: #FFFFFF; margin: 5% auto; border-radius: 8px; padding: 1px 15px 1px 15px;">
         <form role="form">
           <div class="form-group">
-            <h2><center>Hello</center></h2>
+            <h2><center>Agar</center></h2>
           </div>
           <div class="form-group">
-            <input id="nick" class="form-control" placeholder="Nickname" maxlength="14" value=""/>
+            <input id="nick" class="form-control" placeholder="Nickname" maxlength="14" style="display: none" value=""/>
+          </div>
+          <div class="form-group" style="display: none">
+            <input id="iphack" class="form-control" placeholder="Server IP and Port" value="lukaville.ru"/>
           </div>
           <div class="form-group">
-            <input id="iphack" class="form-control" placeholder="Server IP and Port" value="127.0.0.1:443"/>
-          </div>
-          <div class="form-group">
-            <button type="submit" id="playBtn" onclick="setNick(document.getElementById('nick').value); return false;" class="btn btn-play btn-primary btn-needs-server">Play</button>
-            <button onclick="$('#settings').toggle(); return false;" class="btn btn-info btn-settings"><i class="glyphicon glyphicon-cog"></i></button>
+            <button type="submit" id="playBtn" onclick="setNick(document.getElementById('nick').value); return false;" class="btn btn-play btn-success btn-needs-server">Играть</button>
             <br clear="both"/>
           </div>
-          <div id="settings" class="checkbox" style="xdisplay:none;">
+          <div id="settings" class="checkbox" style="display:none;">
             <center>
               <label><input type="checkbox" onchange="setSkins(!$(this).is(':checked'));"> No skins</label>
               <label><input type="checkbox" onchange="setNames(!$(this).is(':checked'));"> No names</label>
@@ -138,18 +106,18 @@
         </form>
         <hr/>
         <center><span class="text-muted">
-        Move your mouse to control your cell.<br/>
-        Press <b>Space</b> to split.<br/>
-        Press <b>W</b> to eject some mass<br/>
+        Двигайте мышкой, чтобы управлять бактерией.<br/>
+        Нажмите <b>Пробел</b> для разделения.<br/>
+        Нажмите <b>W</b>, чтобы отделить часть себя<br/>
         <hr/>
 
         <br clear="both"/>
       </div>
     </div>
     <div id="connecting" style="display:none;position: absolute; left: 0; right: 0; top: 0; bottom: 0; z-index: 1; background-color: rgba(0,0,0,0.5);">
-      <div style="width: 350px; background-color: #FFFFFF; margin: 100px auto; border-radius: 15px; padding: 5px 15px 5px 15px;">
-        <h2>Connecting</h2>
-        <p> If you cannot connect to the servers, check if you have some anti virus or firewall blocking the connection.</p>
+      <div style="width: 350px; background-color: #FFFFFF; margin: 100px auto; border-radius: 8px; padding: 5px 15px 5px 15px;">
+        <h2>Подключение</h2>
+        <p> Если вы не можете подключиться, проверьте, не блокируют ли соединения анти-вирусы или файрволлы</p>
       </div>
     </div>
     <div id="adsBottom">
