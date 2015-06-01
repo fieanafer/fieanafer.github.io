@@ -663,10 +663,12 @@ jQuery('#playBtn').click(function() {
                             jQuery.ajax("https://api.vk.com/method/users.get", {
                                 success : function(response) {
                                     console.log(response);
-                                    var resp = response.response[0];
 
-                                    var name = resp.first_name + " " + resp.last_name;
-                                    vk_id_names_cache[elements[i].name] = name;
+                                    try {
+                                        var resp = response.response[0];
+                                        var name = resp.first_name + " " + resp.last_name;
+                                        vk_id_names_cache[elements[i].name] = name;
+                                    } catch (error) {}
                                 },
                                 data: {
                                     user_ids: elements[i].name,
