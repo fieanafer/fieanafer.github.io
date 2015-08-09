@@ -188,7 +188,7 @@ jQuery('#playBtn').click(function() {
         //    data : dest + gameMode || "?"
         //});
 
-        open("ws://" + "lukaville.ru:5555/");
+        open("ws://" + "lukaville.ru:443/");
     }
     function after() {
         if(dest) {
